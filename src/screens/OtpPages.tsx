@@ -13,17 +13,25 @@ import type { AuthGrid } from './AuthScreen';
 import { DARK_BLUE, styles } from './authStyles';
 
 const mailbox = require('../../images/mailbox.png');
-const DISPLAY_PHONE = '+91  98 4321 5670';
+const DISPLAY_PHONE = '+91-9843215670';
 const INITIAL_OTP_SECONDS = 10 * 60;
 const RESEND_OTP_SECONDS = 60;
 
 type OtpPageProps = {
+  generatedOtp: string;
   grid: AuthGrid;
   onBack: () => void;
+  onOtpGenerated: (otp: string) => void;
   phone: string;
 };
 
-export default function OtpPage({ grid, onBack, phone }: OtpPageProps): JSX.Element {
+export default function OtpPage({
+  generatedOtp,
+  grid,
+  onBack,
+  onOtpGenerated,
+  phone,
+}: OtpPageProps): JSX.Element {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [secondsRemaining, setSecondsRemaining] = useState(INITIAL_OTP_SECONDS);
   const [resendSecondsRemaining, setResendSecondsRemaining] = useState(0);
@@ -47,13 +55,29 @@ export default function OtpPage({ grid, onBack, phone }: OtpPageProps): JSX.Elem
   }, []);
 
   const updateOtp = (value: string, index: number) => {
-    const digit = value.replace(/\D/g, '').slice(-1);
+    const digits = value.replace(/\D/g, '').split('');
     const nextOtp = [...otp];
-    nextOtp[index] = digit;
+
+    if (digits.length === 0) {
+      nextOtp[index] = '';
+      setOtp(nextOtp);
+      return;
+    }
+
+    digits.forEach((digit, digitIndex) => {
+      const targetIndex = index + digitIndex;
+
+      if (targetIndex < nextOtp.length) {
+        nextOtp[targetIndex] = digit;
+      }
+    });
+
     setOtp(nextOtp);
 
-    if (digit && index < inputRefs.current.length - 1) {
-      inputRefs.current[index + 1]?.focus();
+    const nextFocusIndex = Math.min(index + digits.length, inputRefs.current.length - 1);
+
+    if (index < inputRefs.current.length - 1) {
+      inputRefs.current[nextFocusIndex]?.focus();
     }
   };
 
@@ -70,17 +94,33 @@ export default function OtpPage({ grid, onBack, phone }: OtpPageProps): JSX.Elem
       const deleteIndex = currentOtp[index] || index === 0 ? index : index - 1;
 
       nextOtp[deleteIndex] = '';
-      inputRefs.current[Math.max(deleteIndex - 1, 0)]?.focus();
+
+      if (deleteIndex !== index) {
+        inputRefs.current[deleteIndex]?.focus();
+      }
 
       return nextOtp;
     });
   };
 
   const resendOtp = () => {
+    const nextOtp = generateOtp();
+
     setOtp(['', '', '', '', '', '']);
+    onOtpGenerated(nextOtp);
+    console.log(`[TEST OTP] Phone: ${phone}, OTP: ${nextOtp}`);
     setSecondsRemaining(INITIAL_OTP_SECONDS);
     setResendSecondsRemaining(RESEND_OTP_SECONDS);
     inputRefs.current[0]?.focus();
+  };
+
+  const verifyOtp = () => {
+    const enteredOtp = otp.join('');
+    const isMatch = enteredOtp === generatedOtp;
+
+    console.log(
+      `[TEST OTP VERIFY] Entered: ${enteredOtp}, Generated: ${generatedOtp}, Match: ${isMatch}`,
+    );
   };
 
   return (
@@ -97,7 +137,7 @@ export default function OtpPage({ grid, onBack, phone }: OtpPageProps): JSX.Elem
       <Text style={styles.otpIntro}>Enter OTP sent to</Text>
       <Text style={styles.phonePreview}>{displayPhone}</Text>
 
-      <View style={[styles.otpRow, { gap: boxGap }]}>
+      <View style={[styles.otpRow, { gap: boxGap }]}> 
         {otp.map((digit, index) => (
           <TextInput
             key={index}
@@ -111,7 +151,7 @@ export default function OtpPage({ grid, onBack, phone }: OtpPageProps): JSX.Elem
             selectionColor={DARK_BLUE}
             style={[
               styles.otpBox,
-              { height: otpBoxWidth, width: otpBoxWidth },
+              { width: otpBoxWidth },
               index === 0 && styles.otpBoxFocused,
             ]}
             value={digit}
@@ -127,6 +167,7 @@ export default function OtpPage({ grid, onBack, phone }: OtpPageProps): JSX.Elem
 
       <Pressable
         disabled={!isOtpReady}
+        onPress={verifyOtp}
         style={[styles.marketButton, isOtpReady && styles.marketButtonActive]}
       >
         <Text
@@ -175,6 +216,9 @@ function formatPhone(phone: string): string {
   if (phone.length !== 10) {
     return DISPLAY_PHONE;
   }
+  return `+91-${phone}`;
+}
 
-  return `+91  ${phone.slice(0, 2)} ${phone.slice(2, 6)} ${phone.slice(6)}`;
+function generateOtp(): string {
+  return Math.floor(100000 + Math.random() * 900000).toString();
 }

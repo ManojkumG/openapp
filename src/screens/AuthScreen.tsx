@@ -19,6 +19,7 @@ export default function AuthScreen(): JSX.Element {
   const { height, width } = useWindowDimensions();
   const [screen, setScreen] = useState<'login' | 'otp'>('login');
   const [phone, setPhone] = useState('');
+  const [generatedOtp, setGeneratedOtp] = useState('');
 
   const grid = useMemo<AuthGrid>(() => {
     const maxWidth = Math.min(width, 430);
@@ -38,6 +39,14 @@ export default function AuthScreen(): JSX.Element {
     };
   }, [height, width]);
 
+  const verifyPhone = () => {
+    const nextOtp = generateOtp();
+
+    setGeneratedOtp(nextOtp);
+    console.log(`[TEST OTP] Phone: ${phone}, OTP: ${nextOtp}`);
+    setScreen('otp');
+  };
+
   return (
     <View style={styles.screenLock}>
       <View style={[styles.grid, { maxWidth: grid.maxWidth }]}>
@@ -45,13 +54,23 @@ export default function AuthScreen(): JSX.Element {
           <LoginPage
             grid={grid}
             onPhoneChange={setPhone}
-            onVerify={() => setScreen('otp')}
+            onVerify={verifyPhone}
             phone={phone}
           />
         ) : (
-          <OtpPage grid={grid} onBack={() => setScreen('login')} phone={phone} />
+          <OtpPage
+            generatedOtp={generatedOtp}
+            grid={grid}
+            onBack={() => setScreen('login')}
+            onOtpGenerated={setGeneratedOtp}
+            phone={phone}
+          />
         )}
       </View>
     </View>
   );
+}
+
+function generateOtp(): string {
+  return Math.floor(100000 + Math.random() * 900000).toString();
 }

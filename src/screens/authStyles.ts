@@ -1,21 +1,14 @@
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 export const DARK_BLUE = '#12285a';
 export const PAPER = '#f5efe3';
 export const INK = '#111111';
 export const MUTED = '#6e675c';
 
-export const monoFont = Platform.select({
-  ios: 'Courier',
-  android: 'monospace',
-  default: 'monospace',
-});
+export const monoFont = 'JetBrainsMono_500Medium';
+export const numberFontWeight = '500';
 
-export const serifFont = Platform.select({
-  ios: 'Georgia',
-  android: 'serif',
-  default: 'serif',
-});
+export const serifFont = 'CormorantGaramond_400Regular_Italic';
 
 export const styles = StyleSheet.create({
   screenLock: {
@@ -37,17 +30,26 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
     position: 'relative',
   },
+  loginTopObject: {
+    position: 'absolute',
+    top: 45,
+  },
+  loginTopObjectImage: {
+    height: 150,
+    width: 150,
+    left: -14,
+  },
   loginForm: {
-    marginTop: 92,
+    marginTop: 165,
   },
   scriptLabel: {
     color: MUTED,
     fontFamily: serifFont,
-    fontSize: 15,
+    fontSize: 15, // closer to the image
     fontStyle: 'italic',
     fontWeight: '400',
-    letterSpacing: 0,
-    lineHeight: 21.75,
+    letterSpacing: 0.1,
+    lineHeight: 32,
     marginBottom: 11,
     verticalAlign: 'middle',
   },
@@ -56,9 +58,9 @@ export const styles = StyleSheet.create({
     fontFamily: serifFont,
     fontSize: 15,
     fontStyle: 'italic',
-    fontWeight: '700',
-    letterSpacing: 0,
-    lineHeight: 21.75,
+    fontWeight: '400',
+    letterSpacing: 0.1,
+    lineHeight: 32,
     verticalAlign: 'middle',
   },
   phoneInput: {
@@ -67,7 +69,8 @@ export const styles = StyleSheet.create({
     color: '#6b645b',
     fontFamily: monoFont,
     fontSize: 24,
-    height: 63,
+    fontWeight: numberFontWeight,
+    height: 60,
     letterSpacing: 1.33,
     paddingHorizontal: 19,
   },
@@ -158,14 +161,19 @@ export const styles = StyleSheet.create({
   otpIntro: {
     color: MUTED,
     fontFamily: serifFont,
-    fontSize: 13,
+    fontSize: 15,
     fontStyle: 'italic',
+    fontWeight: '400',
+    letterSpacing: 0.2,
+    lineHeight: 24,
     marginTop: 8,
+    verticalAlign: 'middle',
   },
   phonePreview: {
     color: INK,
     fontFamily: monoFont,
-    fontSize: 14,
+    fontSize: 13,
+    fontWeight: numberFontWeight,
     letterSpacing: 0.52,
     marginTop: 8,
   },
@@ -176,14 +184,15 @@ export const styles = StyleSheet.create({
   otpBox: {
     borderColor: '#333333',
     borderWidth: 1,
-    color: INK,
+    color: "#6b645b",
     fontFamily: monoFont,
-    fontSize: 23,
+    fontSize: 24,
+    fontWeight: numberFontWeight,
     textAlign: 'center',
   },
   otpBoxFocused: {
     borderColor: DARK_BLUE,
-    shadowColor: '#aeb3aa',
+    shadowColor: '#aeb3aa'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ,
     shadowOffset: { height: 4, width: -4 },
     shadowOpacity: 1,
     shadowRadius: 0,
@@ -212,7 +221,7 @@ export const styles = StyleSheet.create({
     color: INK,
     fontFamily: monoFont,
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: numberFontWeight,
     letterSpacing: 2,
   },
   marketButton: {
@@ -252,7 +261,7 @@ export const styles = StyleSheet.create({
     letterSpacing: 1.4,
   },
   resendLink: {
-    color: INK,
+    color: "#0E2148",
     fontFamily: monoFont,
     fontSize: 11,
     fontWeight: '900',
