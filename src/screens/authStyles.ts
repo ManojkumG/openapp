@@ -37,7 +37,7 @@ export const styles = StyleSheet.create({
   loginTopObjectImage: {
     height: 150,
     width: 150,
-    left: -14,
+    left: -44,
   },
   loginForm: {
     marginTop: 165,
