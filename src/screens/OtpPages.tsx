@@ -22,6 +22,7 @@ type OtpPageProps = {
   grid: AuthGrid;
   onBack: () => void;
   onOtpGenerated: (otp: string) => void;
+  onVerified: () => void;
   phone: string;
 };
 
@@ -30,6 +31,7 @@ export default function OtpPage({
   grid,
   onBack,
   onOtpGenerated,
+  onVerified,
   phone,
 }: OtpPageProps): JSX.Element {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -121,6 +123,7 @@ export default function OtpPage({
     console.log(
       `[TEST OTP VERIFY] Entered: ${enteredOtp}, Generated: ${generatedOtp}, Match: ${isMatch}`,
     );
+    onVerified();
   };
 
   return (

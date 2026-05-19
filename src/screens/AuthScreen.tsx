@@ -4,6 +4,7 @@ import { useWindowDimensions, View } from 'react-native';
 import LoginPage from './LoginPages';
 import OtpPage from './OtpPages';
 import { styles } from './authStyles';
+import HomePage from './home/HomePage';
 
 export type AuthGrid = {
   column: number;
@@ -17,7 +18,7 @@ export type AuthGrid = {
 
 export default function AuthScreen(): JSX.Element {
   const { height, width } = useWindowDimensions();
-  const [screen, setScreen] = useState<'login' | 'otp'>('login');
+  const [screen, setScreen] = useState<'login' | 'otp' | 'home'>('login');
   const [phone, setPhone] = useState('');
   const [generatedOtp, setGeneratedOtp] = useState('');
 
@@ -57,14 +58,17 @@ export default function AuthScreen(): JSX.Element {
             onVerify={verifyPhone}
             phone={phone}
           />
-        ) : (
+        ) : screen === 'otp' ? (
           <OtpPage
             generatedOtp={generatedOtp}
             grid={grid}
             onBack={() => setScreen('login')}
+            onVerified={() => setScreen('home')}
             onOtpGenerated={setGeneratedOtp}
             phone={phone}
           />
+        ) : (
+          <HomePage grid={grid} />
         )}
       </View>
     </View>
